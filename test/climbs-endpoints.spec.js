@@ -45,7 +45,7 @@ describe('Climbs Endpoints', function() {
 
 				return supertest(app).get(`/api/climbs/${ClimbId}`).expect(404, {
 					error: {
-						message: `Climb doesn't exist`
+						message: `Climb does not exist`
 					}
 				});
 			});
@@ -152,7 +152,7 @@ describe('Climbs Endpoints', function() {
 			it(`responds with 404`, () => {
 				const ClimbId = 123456;
 				return supertest(app).delete(`/api/climbs/${ClimbId}`).expect(404, {
-					error: { message: `Climbs do not exist` }
+					error: { message: `Climb does not exist` }
 				});
 			});
 		});

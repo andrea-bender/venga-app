@@ -34,7 +34,7 @@ climbsRouter
 		if (!name) {
 			return res.status(400).json({
 				error: {
-					message: `Missing name of climb`
+					message: `Missing name`
 				}
 			});
 		}
