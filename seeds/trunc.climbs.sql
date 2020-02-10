@@ -1,0 +1,5 @@
+TRUNCATE
+  climbs
+  RESTART IDENTITY CASCADE;
+
+
