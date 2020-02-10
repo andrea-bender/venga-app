@@ -1,7 +1,5 @@
 module.exports = {
-  PORT: process.env.PORT || 8000,
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  DATABASE_URL:  process.env.DATABASE_URL || "postgresql://heesu@localhost/foodrecipes"
+	PORT: process.env.PORT || 8000,
+	NODE_ENV: process.env.NODE_ENV || 'development',
+	DATABASE_URL: process.env.DATABASE_URL || 'postgresql://andreabender@localhost/venga'
 };
-
-

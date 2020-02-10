@@ -1,3 +1,4 @@
+'use strict';
 process.env.NODE_ENV = 'test';
 process.env.TZ = 'UTC';
 
@@ -7,5 +8,3 @@ const supertest = require('supertest');
 
 global.expect = expect;
 global.supertest = supertest;
-
-
