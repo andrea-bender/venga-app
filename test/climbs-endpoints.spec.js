@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 'use strict';
 const knex = require('knex');
 const app = require('../src/app');
@@ -19,7 +18,6 @@ describe('Climbs Endpoints', function() {
 	before('clean the table', () => db.raw('TRUNCATE climbs RESTART IDENTITY CASCADE'));
 	afterEach('cleanup', () => db.raw('TRUNCATE climbs RESTART IDENTITY CASCADE'));
 
-	// get recipes
 	describe(`GET /api/climbs`, () => {
 		context(`Given no climbs`, () => {
 			it(`Responds with 200 and empty list`, () => {
@@ -145,6 +143,48 @@ describe('Climbs Endpoints', function() {
 					.delete(`/api/climbs/${idToRemove}`)
 					.expect(204)
 					.then((res) => supertest(app).get(`/api/climbs`).expect(expectedClimbs));
+			});
+		});
+	});
+
+	describe(`PATCH /api/climbs/:id`, () => {
+		context(`Given no climbs in the database`, () => {
+			it(`responds with 404`, () => {
+				const ClimbId = 123456;
+				return supertest(app).delete(`/api/climbs/${ClimbId}`).expect(404, {
+					error: { message: `Climbs do not exist` }
+				});
+			});
+		});
+
+		context('Given there are climbs in the database', () => {
+			const testClimbs = makeClimbsArray();
+
+			beforeEach('insert climbs', () => {
+				return db.into('climbs').insert(testClimbs);
+			});
+
+			it('Responds wtih 204 and update climb', () => {
+				const idToUpdate = 4;
+				const testClimbs = makeClimbsArray();
+				const updateClimb = {
+					name: 'Update climb name',
+					location: 'Update climb location',
+					description: 'Update climb description',
+					grade: 'Update climg grade',
+					type: 'update climb type',
+					rating: 'update climb rating'
+				};
+				const expectedClimbs = {
+					...testClimbs[idToUpdate - 1],
+					...updateClimb
+				};
+
+				return supertest(app)
+					.patch(`/api/climbs/${idToUpdate}`)
+					.send(updateClimb)
+					.expect(204)
+					.then((res) => supertest(app).get(`/api/climbs/${idToUpdate}`).expect(expectedClimbs));
 			});
 		});
 	});
