@@ -19,6 +19,10 @@ app.use(express.json());
 
 app.use('/api/climbs', climbsRouter);
 
+app.get('/', (req, res) => {
+	res.send('Hello, boilerplate!');
+});
+
 // app.use(function errorHandler(error, req, res, next) {
 // 	let response;
 // 	if (NODE_ENV === 'production') {
