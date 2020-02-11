@@ -138,13 +138,13 @@ describe('Climb Endpoints', function() {
 			});
 
 			it('get climbs from store with 204', () => {
-				const idToRemove = 1;
+				const idToRemove = 4;
 				const expectedClimbs = testClimbs.filter((climb) => climb.id !== idToRemove);
 
 				return supertest(app)
-					.delete(`/api/recipes/${idToRemove}`)
+					.delete(`/api/climbs/${idToRemove}`)
 					.expect(204)
-					.then((res) => supertest(app).get(`/api/recipes`).expect(expectedClimbs));
+					.then((res) => supertest(app).get(`/api/climbs`).expect(expectedClimbs));
 			});
 		});
 	});
@@ -168,7 +168,7 @@ describe('Climb Endpoints', function() {
 			});
 
 			it('Responds wtih 204 and updated climb', () => {
-				const idToUpdate = 3;
+				const idToUpdate = 4;
 				const testClimbs = makeClimbsArray();
 				const updateClimb = {
 					name: 'Update  name',

@@ -31,6 +31,16 @@ function makeClimbsArray() {
 			grade: '5.12a',
 			type: 'Sport',
 			rating: 3
+		},
+		{
+			id: 4,
+			name: 'fourth test climb!',
+			location: 'fourth location',
+			description:
+				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
+			grade: '5.9',
+			type: 'Traditional',
+			rating: 4
 		}
 	];
 }

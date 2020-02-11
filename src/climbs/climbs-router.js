@@ -106,7 +106,6 @@ climbsRouter
 			.catch(next);
 	})
 	.get((req, res, next) => {
-		console.log(res.climbs, 'climbs here');
 		res.json(climbForm(res.climbs));
 	})
 	.delete((req, res, next) => {
@@ -131,7 +130,6 @@ climbsRouter
 				}
 			});
 
-		console.log(req.params, 'params here');
 		const { id } = req.params;
 		const knexInstance = req.app.get('db');
 
