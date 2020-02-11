@@ -3,7 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const { makeClimbsArray } = require('./test-helpers');
 
-describe('Climbs Endpoints', function() {
+describe('Climb Endpoints', function() {
 	let db;
 
 	before('make knex instance', () => {
@@ -18,6 +18,7 @@ describe('Climbs Endpoints', function() {
 	before('clean the table', () => db.raw('TRUNCATE climbs RESTART IDENTITY CASCADE'));
 	afterEach('cleanup', () => db.raw('TRUNCATE climbs RESTART IDENTITY CASCADE'));
 
+	// GET climbs
 	describe(`GET /api/climbs`, () => {
 		context(`Given no climbs`, () => {
 			it(`Responds with 200 and empty list`, () => {
@@ -28,11 +29,11 @@ describe('Climbs Endpoints', function() {
 		context(`Given climbs in database`, () => {
 			const testClimbs = makeClimbsArray();
 
-			beforeEach(`Insert climbs`, () => {
+			beforeEach(`Insert Climbs`, () => {
 				return db.into('climbs').insert(testClimbs);
 			});
 
-			it('Responds with 200 and climbs', () => {
+			it('Responds with 200 and get all store', () => {
 				return supertest(app).get('/api/climbs').expect(200, testClimbs);
 			});
 		});
@@ -41,11 +42,11 @@ describe('Climbs Endpoints', function() {
 	describe(`GET /api/climbs/:id`, () => {
 		context(`Given no climbs`, () => {
 			it(`Responds with 404`, () => {
-				const ClimbId = 123456;
+				const ClimbsId = 123456;
 
-				return supertest(app).get(`/api/climbs/${ClimbId}`).expect(404, {
+				return supertest(app).get(`/api/climbs/${ClimbsId}`).expect(404, {
 					error: {
-						message: `Climb does not exist`
+						message: `Climb doesn't exist`
 					}
 				});
 			});
@@ -58,24 +59,25 @@ describe('Climbs Endpoints', function() {
 				return db.into('climbs').insert(testClimbs);
 			});
 
-			it('Responds with 200 and specific climb by id', () => {
-				const ClimbId = 2;
-				const expectedClimbs = testClimbs[ClimbId - 1];
+			it('Responds with 200 and specified climb', () => {
+				const ClimbsId = 2;
+				const expectedClimbs = testClimbs[ClimbsId - 1];
 
-				return supertest(app).get(`/api/climbs/${ClimbId}`).expect(200, expectedClimbs);
+				return supertest(app).get(`/api/climbs/${ClimbsId}`).expect(200, expectedClimbs);
 			});
 		});
 	});
 
+	// POST climbs
 	describe(`POST /api/climbs`, () => {
-		it(`Creates climb with 201 responds and new climb`, function() {
+		it(`Creates climbs with 201 responds and adds a new climb`, function() {
 			const newClimb = {
-				name: 'climb name',
-				location: 'climb location',
-				description: 'climb description',
-				type: 'climb type',
-				grade: 'climb grade',
-				rating: 0
+				name: 'test name',
+				location: 'test location',
+				description: 'test description',
+				grade: 'test grade',
+				type: 'Boulder',
+				rating: 3
 			};
 
 			return supertest(app)
@@ -85,12 +87,11 @@ describe('Climbs Endpoints', function() {
 				.expect((res) => {
 					expect(res.body).to.have.property('id');
 					expect(res.body.name).to.eql(newClimb.name);
-					expect(res.body.location).to.eql(newClimb.loaction);
+					expect(res.body.location).to.eql(newClimb.location);
 					expect(res.body.description).to.eql(newClimb.description);
 					expect(res.body.grade).to.eql(newClimb.grade);
 					expect(res.body.type).to.eql(newClimb.type);
 					expect(res.body.rating).to.eql(newClimb.rating);
-
 					expect(res.headers.location).to.eql(`/api/climbs/${res.body.id}`);
 				})
 				.then((res) => supertest(app).get(`/api/climbs/${res.body.id}`).expect(res.body));
@@ -100,15 +101,15 @@ describe('Climbs Endpoints', function() {
 
 		requiredFields.forEach((field) => {
 			const newClimb = {
-				name: 'climb name',
-				location: 'climb location',
-				description: 'climb description',
-				type: 'climb type',
-				grade: 'climb grade',
-				rating: 0
+				name: 'test name',
+				location: 'test location',
+				description: 'test description',
+				grade: 'test grade',
+				type: 'Boulder',
+				rating: 3
 			};
 
-			it(`responds with 400 and an error message when somthing missing`, () => {
+			it(`response with 400 and an error message when somthing is missing`, () => {
 				delete newClimb[field];
 
 				return supertest(app).post('/api/climbs').send(newClimb).expect(400, {
@@ -118,12 +119,13 @@ describe('Climbs Endpoints', function() {
 		});
 	});
 
+	//DELETE climb
 	describe(`DELETE /api/climbs/:id`, () => {
 		context(`Given no climbs in the database`, () => {
 			it(`responds with 404`, () => {
-				const ClimbId = 123456;
-				return supertest(app).delete(`/api/climbs/${ClimbId}`).expect(404, {
-					error: { message: `Climb does not exist` }
+				const ClimbsId = 123456;
+				return supertest(app).delete(`/api/climbs/${ClimbsId}`).expect(404, {
+					error: { message: `Climb doesn't exist` }
 				});
 			});
 		});
@@ -136,23 +138,24 @@ describe('Climbs Endpoints', function() {
 			});
 
 			it('get climbs from store with 204', () => {
-				const idToRemove = 5;
+				const idToRemove = 1;
 				const expectedClimbs = testClimbs.filter((climb) => climb.id !== idToRemove);
 
 				return supertest(app)
-					.delete(`/api/climbs/${idToRemove}`)
+					.delete(`/api/recipes/${idToRemove}`)
 					.expect(204)
-					.then((res) => supertest(app).get(`/api/climbs`).expect(expectedClimbs));
+					.then((res) => supertest(app).get(`/api/recipes`).expect(expectedClimbs));
 			});
 		});
 	});
 
+	// PATCH climb
 	describe(`PATCH /api/climbs/:id`, () => {
 		context(`Given no climbs in the database`, () => {
 			it(`responds with 404`, () => {
-				const ClimbId = 123456;
-				return supertest(app).delete(`/api/climbs/${ClimbId}`).expect(404, {
-					error: { message: `Climb does not exist` }
+				const ClimbsId = 123456;
+				return supertest(app).delete(`/api/climbs/${ClimbsId}`).expect(404, {
+					error: { message: `Climb doesn't exist` }
 				});
 			});
 		});
@@ -164,16 +167,16 @@ describe('Climbs Endpoints', function() {
 				return db.into('climbs').insert(testClimbs);
 			});
 
-			it('Responds wtih 204 and update climb', () => {
-				const idToUpdate = 4;
+			it('Responds wtih 204 and updated climb', () => {
+				const idToUpdate = 3;
 				const testClimbs = makeClimbsArray();
 				const updateClimb = {
-					name: 'Update climb name',
-					location: 'Update climb location',
-					description: 'Update climb description',
-					grade: 'Update climg grade',
-					type: 'update climb type',
-					rating: 'update climb rating'
+					name: 'Update  name',
+					location: 'Update  location',
+					description: 'Update  description',
+					grade: 'Update grade',
+					type: 'Sport',
+					rating: 2
 				};
 				const expectedClimbs = {
 					...testClimbs[idToUpdate - 1],

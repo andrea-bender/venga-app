@@ -5,7 +5,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const ClimbRouter = require('./climbs/climbs-router');
+const climbsRouter = require('./climbs/climbs-router');
 
 const { NODE_ENV } = require('./config');
 const app = express();
@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/climbs', ClimbRouter);
+app.use('/api/climbs', climbsRouter);
 
 // app.use(function errorHandler(error, req, res, next) {
 // 	let response;

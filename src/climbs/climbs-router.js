@@ -6,13 +6,13 @@ const climbsRouter = express.Router();
 const jsonParser = express.json();
 const path = require('path');
 
-const ClimbForm = (climbs) => ({
+const climbForm = (climbs) => ({
 	id: climbs.id,
 	name: climbs.name,
-	location: climbs.ingredients,
+	location: climbs.location,
 	description: climbs.description,
-	type: climbs.type,
 	grade: climbs.grade,
+	type: climbs.type,
 	rating: climbs.rating
 });
 
@@ -23,7 +23,7 @@ climbsRouter
 
 		ClimbsService.getAllClimbs(knexInstance)
 			.then((climbs) => {
-				res.json(climbs.map(ClimbForm));
+				res.json(climbs.map(climbForm));
 			})
 			.catch(next);
 	})
@@ -54,6 +54,7 @@ climbsRouter
 				}
 			});
 		}
+
 		if (!grade) {
 			return res.status(400).json({
 				error: {
@@ -61,6 +62,7 @@ climbsRouter
 				}
 			});
 		}
+
 		if (!type) {
 			return res.status(400).json({
 				error: {
@@ -68,6 +70,7 @@ climbsRouter
 				}
 			});
 		}
+
 		if (!rating) {
 			return res.status(400).json({
 				error: {
@@ -78,7 +81,7 @@ climbsRouter
 
 		ClimbsService.insertClimb(req.app.get('db'), newClimb)
 			.then((climbs) => {
-				res.status(201).location(path.posix.join(req.originalUrl + `/${climbs.id}`)).json(ClimbForm(climbs));
+				res.status(201).location(path.posix.join(req.originalUrl + `/${climbs.id}`)).json(climbForm(climbs));
 			})
 			.catch(next);
 	});
@@ -93,7 +96,7 @@ climbsRouter
 				if (!climbs) {
 					return res.status(404).json({
 						error: {
-							message: `Climb does not exist`
+							message: `Climb doesn't exist`
 						}
 					});
 				}
@@ -103,8 +106,8 @@ climbsRouter
 			.catch(next);
 	})
 	.get((req, res, next) => {
-		console.log(res.climbs);
-		res.json(ClimbForm(res.climbs));
+		console.log(res.climbs, 'climbs here');
+		res.json(climbForm(res.climbs));
 	})
 	.delete((req, res, next) => {
 		const { id } = req.params;
@@ -117,8 +120,8 @@ climbsRouter
 			.catch(next);
 	})
 	.patch(jsonParser, (req, res, next) => {
-		const { name, location, description, type, grade, rating } = req.body;
-		const climbToUpdate = { name, location, description, type, grade, rating };
+		const { name, location, description, grade, type, rating } = req.body;
+		const climbToUpdate = { name, location, description, grade, type, rating };
 
 		const numberOfValues = Object.values(climbToUpdate).filter(Boolean).length;
 		if (numberOfValues === 0)
@@ -128,7 +131,7 @@ climbsRouter
 				}
 			});
 
-		console.log(req.params);
+		console.log(req.params, 'params here');
 		const { id } = req.params;
 		const knexInstance = req.app.get('db');
 
